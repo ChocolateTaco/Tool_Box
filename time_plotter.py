@@ -1,8 +1,7 @@
 # Author:           Steven Tran
-# Date:             2021-11-17
-# Description:      This program plots the time it takes for bubble sort and
-# insertion sort to finish sorting the same set of data (a list in this
-# case). It uses the matplotlib module to graph the results of 10 different
+# Date:             2022-06-04
+# Description:      This program plots the time it takes for various sorting 
+# algorithms. It uses the matplotlib module to graph the results of 10 different
 # sized randomly generated data sets.
 
 # Modules Imports
@@ -16,7 +15,8 @@ from merge_sort import mergeSort
 # from static_array import StaticArray
 from dynamic_array import DynamicArray
 from min_heap import MinHeap, heapsort, MinHeapException
-
+from static_array import StaticArray
+from countingSortAssignment import *
 
 def sort_timer(func):
 	"""Wrapper for timing the duration a function takes to run."""
@@ -73,9 +73,13 @@ def heap_sort(a_list):
 	heapsort(a_list)
 
 @sort_timer
+def countSort(static_arr):
+	count_sort(static_arr)
+
+@sort_timer
 def compare_sorts(sorting_alg1=bubble_sort, sorting_alg2=insertion_sort,
 sorting_alg3=merge_sort, sorting_alg4=selection_sort, sorting_alg5=shell_sort,
-sorting_alg6=heap_sort):
+sorting_alg6=heap_sort, sorting_alg7=count_sort):
 	"""Will compare the two sorting functions: bubble sort and insertion
 	sort."""
 
@@ -95,6 +99,7 @@ sorting_alg6=heap_sort):
 	alg4_ytime = []
 	alg5_ytime = []
 	alg6_ytime = []
+	alg7_ytime = []
 
 	while point_count <= point_count_max:
 		list_1 = []         # first list to be randomized by the plot limit
@@ -106,6 +111,10 @@ sorting_alg6=heap_sort):
 		list_4 = list_1.copy()
 		list_5 = list_1.copy()
 		list_6 = DynamicArray(list_1.copy())
+
+		list_7 = StaticArray(len(list_1))
+		for index, value in enumerate(list_1):
+			list_7[index] = value
 
 		# Sorting begins + info for human to know status.
 		sort1 = sorting_alg1(list_1)
@@ -139,6 +148,12 @@ sorting_alg6=heap_sort):
 		      f"points\n")
 		point_count += point_increment
 
+		sort7 = sorting_alg7(list_7)
+		alg7_ytime.append(sort7)
+		print(f"* Completed {sorting_alg7.__name__} with {point_count} "
+		      f"points\n")
+		point_count += point_increment
+
 	# Plot Section that plots Number of Elements Sorted versus the Time
 	pyplot.plot(x_axis, alg1_ytime, 'co--', linewidth=2,
 	            label=f"{sorting_alg1.__name__}")
@@ -152,6 +167,8 @@ sorting_alg6=heap_sort):
 	            label=f"{sorting_alg5.__name__}")
 	pyplot.plot(x_axis, alg6_ytime, color = 'orangered', linestyle='dotted',
 				linewidth=2, label=f"{sorting_alg6.__name__}")
+	pyplot.plot(x_axis, alg7_ytime, color = 'purple', linestyle='dotted',
+			linewidth=2, label=f"{sorting_alg7.__name__}")
 	pyplot.xlabel("Number of Elements Sorted")
 	pyplot.ylabel("Time to Sort (seconds)")
 	pyplot.title("Sorting Algorithm Comparison")
